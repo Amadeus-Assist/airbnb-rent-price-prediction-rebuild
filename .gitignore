@@ -148,3 +148,6 @@ calm-buttress-326720-d8c86ee462b9.json
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# gradle
+.gralde
