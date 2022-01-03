@@ -117,7 +117,7 @@ venv.bak/
 .ropeproject
 
 # mkdocs documentation
-/site
+**/site
 
 # mypy
 .mypy_cache/
@@ -128,8 +128,8 @@ dmypy.json
 calm-buttress-326720-d8c86ee462b9.json
 
 # dependencies
-/node_modules
-/.pnp
+**/node_modules
+**/.pnp
 .pnp.js
 
 # testing
@@ -169,7 +169,7 @@ hs_err_pid*
 
 ### Gradle ###
 .gradle
-/build/
+**/build/
 
 # Ignore Gradle GUI config
 gradle-app.setting
