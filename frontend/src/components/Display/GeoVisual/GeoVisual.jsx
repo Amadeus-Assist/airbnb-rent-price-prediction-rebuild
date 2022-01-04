@@ -27,9 +27,7 @@ class GeoVisual extends Component {
 
     render() {
         return (
-            <div className="outer-container">
-                <div id="mapid" className="map"></div>
-            </div>
+            <div id="mapid" className="map"/>
         );
     }
 }

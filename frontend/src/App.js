@@ -22,9 +22,9 @@
 //
 // export default App;
 
-import {Component} from "react";
-import Menu from "./OuterContainer/Menu/Menu";
-import Display from "./OuterContainer/Display/Display";
+import React, {Component} from "react";
+import Menu from "./components/Menu/Menu";
+import Display from "./components/Display/Display";
 
 class App extends Component {
   // state = {
@@ -41,7 +41,7 @@ class App extends Component {
   render() {
     // const {hello} = this.state;
     return (
-        <div className="App">
+        <div className="App" >
           {/*<header className="App-header">*/}
           {/*  <div className="App-intro">*/}
           {/*    <h2>Hello</h2>*/}
@@ -50,8 +50,11 @@ class App extends Component {
           {/*    </div>*/}
           {/*  </div>*/}
           {/*</header>*/}
-            <Menu/>
-            <Display/>
+            <div className="ui vertical masthead segment">
+                <Menu/>
+                <Display/>
+            </div>
+
         </div>
     );
   }
