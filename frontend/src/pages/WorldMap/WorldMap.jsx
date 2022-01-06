@@ -5,7 +5,7 @@ import './WorldMap.css'
 class WorldMap extends Component {
     render() {
         return (
-            <LeafletMap center={[40.77, -73.97]} zoom={3.5} />
+            <LeafletMap center={[40.77, -73.97]} zoom={3.5} markers={[{city:'nyc', location: [40.71, -74]}]} />
         );
     }
 }
