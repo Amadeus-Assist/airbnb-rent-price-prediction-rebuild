@@ -1,36 +1,46 @@
-import React, {Component} from 'react';
+import React, {useState, useEffect} from 'react';
+import {useParams} from 'react-router-dom'
 import Charts from "../../components/Display/Charts/Charts";
 import LeafletMap from "../../components/LeafletMap/LeafletMap";
 
-class CityView extends Component {
-    state = {ready: false}
+function CityView(props) {
+    const [ready, setReady] = useState(false)
+    const [center, setCenter] = useState()
+    const [zoom, setZoom] = useState()
+    const [geoJson, setGeoJson] = useState()
+    const params = useParams()
+    console.log("useParams: ", params)
+    const {city} = params
 
-    async componentDidMount() {
-        console.log("Cityview.props: ", this.props)
-        const {city} = this.props.match.params
-        const geoResponse = await fetch(`/static/data/${city}-neighborhoods.geojson`)
-        const geoJson = await geoResponse.json()
+    useEffect(() => {
 
-        const cityAttrResponse = await fetch(`/api/cityview/${city}`)
-        const cityAttrData = await cityAttrResponse.json()
-        const {center, zoom} = cityAttrData
+        async function fetchData() {
+            const geoResponse = await fetch(`/static/data/${city}-neighborhoods.geojson`)
+            const geoJson = await geoResponse.json()
 
-        this.setState({center: center, zoom: zoom, geoJson: geoJson, ready: true})
-    }
+            const cityAttrResponse = await fetch(`/api/cityview/${city}`)
+            const cityLocationData = await cityAttrResponse.json()
+            console.log("cityLocData: ", cityLocationData)
 
-    render() {
-        const {center, zoom, geoJson, ready} = this.state
+            const {center, zoom} = cityLocationData
+            setCenter(center)
+            setZoom(zoom)
+            setGeoJson(geoJson)
+            setReady(true)
+        }
 
-        return (
-            <div>
-                <div className="geovisual">
-                    {ready ? <LeafletMap center={center} zoom={zoom} geoJson={geoJson}/> :
-                        <div/>}
-                </div>
-                <Charts/>
+        fetchData().catch(console.err)
+    }, [city]);
+
+    return (
+        <div>
+            <div className="geovisual">
+                {ready ? <LeafletMap center={center} zoom={zoom} geoJson={geoJson}/> :
+                    <></>}
             </div>
-        );
-    }
+            <Charts/>
+        </div>
+    );
 }
 
 export default CityView;

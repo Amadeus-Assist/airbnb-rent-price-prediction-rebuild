@@ -1,6 +1,8 @@
 package com.columbia.backend.controller;
 
+import com.columbia.backend.response.CityLocResponse;
 import com.columbia.backend.response.CityNameResponse;
+import com.columbia.backend.service.GetCityLocationService;
 import com.columbia.backend.service.GetSimilarCityService;
 import com.sun.istack.NotNull;
 import org.slf4j.Logger;
@@ -18,6 +20,8 @@ public class CityDataController {
 
     @Resource
     private GetSimilarCityService getSimilarCityService;
+    @Resource
+    private GetCityLocationService getCityLocationService;
 
     @ResponseBody
     @GetMapping("/getSimilarCity/{cityInput}")
@@ -26,5 +30,12 @@ public class CityDataController {
         String city = getSimilarCityService.getSimilarCity(cityInput);
         logger.info("returned city: {}", city);
         return new CityNameResponse(city);
+    }
+
+    @ResponseBody
+    @GetMapping("/cityview/{city}")
+    public CityLocResponse getCityLocation(@NotNull @PathVariable("city") String city) {
+        return new CityLocResponse(getCityLocationService.getCenter(city),
+                getCityLocationService.getZoom(city));
     }
 }
