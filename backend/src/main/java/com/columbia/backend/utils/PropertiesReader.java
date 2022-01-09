@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
+import pojo.CityAttr;
 
 import javax.annotation.Resource;
 import java.io.FileReader;
@@ -48,10 +49,11 @@ public class PropertiesReader {
     }
 
     @Bean(name = "cityAttrMap")
-    public Map<String, String[]> getCityAttrMap() {
+    public Map<String, CityAttr> getCityAttrMap() {
         Properties cityAttrProps = getProperties(Constants.CITY_ATTRS_PATH);
-        Map<String, String[]> propsMap = new HashMap<>();
+        Map<String, CityAttr> propsMap = new HashMap<>();
         cityAttrProps.forEach((key, value) -> {
+            String city = (String) key;
             String valueStr = (String) value;
             if (isEmpty(valueStr)) {
                 logger.error("Invalid City Attrs format!");
@@ -67,7 +69,9 @@ public class PropertiesReader {
                 logger.error("Invalid City Attrs format!");
                 throw new RuntimeException("Invalid City Attrs format!");
             }
-            propsMap.put((String) key, attrs);
+            double[] location = new double[]{Double.parseDouble(attrs[0]), Double.parseDouble(attrs[1])};
+            int zoom = Integer.parseInt(attrs[2]);
+            propsMap.put(city, new CityAttr(city, location, zoom));
         });
         return propsMap;
     }

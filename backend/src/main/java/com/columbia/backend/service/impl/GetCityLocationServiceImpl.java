@@ -2,30 +2,44 @@ package com.columbia.backend.service.impl;
 
 import com.columbia.backend.service.GetCityLocationService;
 import org.springframework.stereotype.Service;
+import pojo.CityAttr;
+import pojo.Marker;
 
 import javax.annotation.Resource;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class GetCityLocationServiceImpl implements GetCityLocationService {
     @Resource(name = "cityAttrMap")
-    private Map<String, String[]> cityAttrMap;
+    private Map<String, CityAttr> cityAttrMap;
 
     @Override
-    public double[] getCenter(String city) {
+    public CityAttr getCityAttr(String city) {
         if (!cityAttrMap.containsKey(city)){
             return null;
         }
-        String[] attrs = cityAttrMap.get(city);
-        return new double[]{Double.parseDouble(attrs[0]), Double.parseDouble(attrs[1])};
+        return cityAttrMap.get(city);
+    }
+
+    @Override
+    public double[] getCenter(String city) {
+        return Optional.ofNullable(getCityAttr(city)).map(CityAttr::getLocation).orElse(null);
     }
 
     @Override
     public int getZoom(String city) {
-        if (!cityAttrMap.containsKey(city)){
-            return -1;
+        return Optional.ofNullable(getCityAttr(city)).map(CityAttr::getZoom).orElse(-1);
+    }
+
+    @Override
+    public Marker[] getAllMarkers() {
+        Marker[] markers = new Marker[cityAttrMap.size()];
+        int index = 0;
+        for(String city : cityAttrMap.keySet()){
+            CityAttr attr = cityAttrMap.get(city);
+            markers[index++] = new Marker(attr.getName(), attr.getLocation());
         }
-        String[] attrs = cityAttrMap.get(city);
-        return Integer.parseInt(attrs[2]);
+        return markers;
     }
 }
