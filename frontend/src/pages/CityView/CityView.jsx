@@ -15,12 +15,12 @@ function CityView(props) {
     useEffect(() => {
 
         async function fetchData() {
-            const geoResponse = await fetch(`/static/data/${city}-neighborhoods.geojson`)
-            const geoJson = await geoResponse.json()
-
             const cityAttrResponse = await fetch(`/api/cityview/${city}`)
             const cityLocationData = await cityAttrResponse.json()
             console.log("cityLocData: ", cityLocationData)
+
+            const geoResponse = await fetch(`/static/data/${city}-neighborhoods.geojson`)
+            const geoJson = await geoResponse.json()
 
             const {center, zoom} = cityLocationData
             setCenter(center)

@@ -6,9 +6,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 import java.util.Arrays;
 
+@EnableAspectJAutoProxy(exposeProxy = true)
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class })
 public class BackendApplication {
 
