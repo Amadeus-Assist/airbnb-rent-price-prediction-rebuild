@@ -126,6 +126,7 @@ dmypy.json
 
 # Credentials
 calm-buttress-326720-d8c86ee462b9.json
+credentials.properties
 
 # dependencies
 **/node_modules
@@ -139,7 +140,6 @@ calm-buttress-326720-d8c86ee462b9.json
 /build
 
 # misc
-.DS_Store
 .env.local
 .env.development.local
 .env.test.local
