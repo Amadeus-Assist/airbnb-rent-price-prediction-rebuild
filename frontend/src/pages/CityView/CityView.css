@@ -1,0 +1,25 @@
+.geovisual{
+    width: 55%;
+    height: 100%;
+    float: left;
+}
+
+.rightpane{
+    width: 45%;
+    height: 100%;
+    float: right;
+    overflow: hidden;
+}
+
+/*.tabs{*/
+/*    width: 100%;*/
+/*    height: 10%;*/
+/*    float: top;*/
+/*}*/
+
+.chartdisplay{
+    width: 100%;
+    height: calc(100% - 39px);
+    float: bottom;
+    background-color: cornflowerblue;
+}

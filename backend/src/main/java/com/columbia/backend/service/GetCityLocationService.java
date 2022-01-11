@@ -1,7 +1,7 @@
 package com.columbia.backend.service;
 
-import pojo.CityAttr;
-import pojo.Marker;
+import com.columbia.backend.pojo.CityAttr;
+import com.columbia.backend.pojo.Marker;
 
 public interface GetCityLocationService {
     CityAttr getCityAttr(String city);

@@ -1,4 +1,4 @@
-package pojo;
+package com.columbia.backend.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Setter
 @Getter
-public class CityAttr {
-    private String name;
+public class Marker {
+    private String city;
     private double[] location;
-    private int zoom;
 }

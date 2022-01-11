@@ -1,4 +1,4 @@
-package pojo;
+package com.columbia.backend.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Setter
 @Getter
-public class Marker {
-    private String city;
-    private double[] location;
+public class CovidHistoryDataResponse {
+    private String[] covidHistoryDate;
+    private int[] covidHistoryData;
 }

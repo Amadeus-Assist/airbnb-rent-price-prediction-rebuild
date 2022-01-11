@@ -12,9 +12,7 @@ function Home() {
 
     const doSearch = async () => {
         if (!(typeof cityInput == "undefined" || cityInput == null || cityInput === '')) {
-            console.log("cityInput: ", cityInput)
             const response = await fetch(`/api/getSimilarCity/${cityInput}`);
-            // const response = await fetch(`/api/hello`);
             const data = await response.json();
             const {city} = data;
             navigate(`/cityview/${city}`)

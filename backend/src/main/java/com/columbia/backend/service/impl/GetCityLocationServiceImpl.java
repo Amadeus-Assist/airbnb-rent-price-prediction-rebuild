@@ -2,8 +2,8 @@ package com.columbia.backend.service.impl;
 
 import com.columbia.backend.service.GetCityLocationService;
 import org.springframework.stereotype.Service;
-import pojo.CityAttr;
-import pojo.Marker;
+import com.columbia.backend.pojo.CityAttr;
+import com.columbia.backend.pojo.Marker;
 
 import javax.annotation.Resource;
 import java.util.Map;
@@ -38,7 +38,7 @@ public class GetCityLocationServiceImpl implements GetCityLocationService {
         int index = 0;
         for(String city : cityAttrMap.keySet()){
             CityAttr attr = cityAttrMap.get(city);
-            markers[index++] = new Marker(attr.getName(), attr.getLocation());
+            markers[index++] = new Marker(attr.getCity(), attr.getLocation());
         }
         return markers;
     }

@@ -1,9 +1,11 @@
 import React from 'react';
+import {useNavigate} from 'react-router-dom'
 import {MapContainer, TileLayer, Marker, GeoJSON} from 'react-leaflet'
 import './LeafletMap.css'
 
 function LeafletMap(props){
     const {center, zoom, markers, geoJson} = props
+    const navigate = useNavigate();
 
     return (
         <MapContainer center={center} zoom={zoom}>
@@ -18,7 +20,11 @@ function LeafletMap(props){
             />
             {
                 markers === undefined ? <div/> : markers.map((markerObj) => {
-                    return <Marker key={markerObj.city} position={markerObj.location}/>
+                    return <Marker eventHandlers={{
+                        click: () => {
+                            navigate(`/cityview/${markerObj.city}`)
+                        },
+                    }} key={markerObj.city} position={markerObj.location}/>
                 })
             }
 

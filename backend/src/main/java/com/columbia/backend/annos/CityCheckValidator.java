@@ -1,5 +1,6 @@
 package com.columbia.backend.annos;
 
+import com.columbia.backend.pojo.CityAttr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +13,7 @@ public class CityCheckValidator implements ConstraintValidator<CityCheck, String
     private final static Logger logger = LoggerFactory.getLogger(CityCheckValidator.class);
 
     @Resource(name = "cityAttrMap")
-    private Map<String, String[]> cityAttrMap;
+    private Map<String, CityAttr> cityAttrMap;
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {

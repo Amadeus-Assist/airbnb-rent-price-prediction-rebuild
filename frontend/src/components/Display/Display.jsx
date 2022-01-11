@@ -11,7 +11,7 @@ function Display(){
             <Routes>
                 <Route path="/home" element={<Home/>}/>
                 <Route path="/map" element={<WorldMap/>}/>
-                <Route path="/cityview/:city" element={<CityView/>}/>
+                <Route path="/cityview/:city/*" element={<CityView/>}/>
                 <Route path="*" element={<Navigate replace to="/home"/>}/>
             </Routes>
         </div>

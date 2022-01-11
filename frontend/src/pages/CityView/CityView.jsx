@@ -1,7 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import {useParams} from 'react-router-dom'
-import Charts from "../../components/Display/Charts/Charts";
+import {useParams, Route, Navigate, Routes} from 'react-router-dom'
 import LeafletMap from "../../components/LeafletMap/LeafletMap";
+import HistoryCharts from "./HistoryCharts/HistoryCharts"
+import './CityView.css'
+import PredictionCharts from "./PredictionCharts/PredictionCharts";
+import NavBar from "../../components/NavBar/NavBar";
 
 function CityView(props) {
     const [ready, setReady] = useState(false)
@@ -9,7 +12,6 @@ function CityView(props) {
     const [zoom, setZoom] = useState()
     const [geoJson, setGeoJson] = useState()
     const params = useParams()
-    console.log("useParams: ", params)
     const {city} = params
 
     useEffect(() => {
@@ -17,10 +19,14 @@ function CityView(props) {
         async function fetchData() {
             const cityAttrResponse = await fetch(`/api/cityview/${city}`)
             const cityLocationData = await cityAttrResponse.json()
-            console.log("cityLocData: ", cityLocationData)
 
             const geoResponse = await fetch(`/static/data/${city}-neighborhoods.geojson`)
             const geoJson = await geoResponse.json()
+
+            // const covidHistoryResponse = await fetch(`/api/history/covid/${city}`)
+            // const covidHistoryData = await covidHistoryResponse.json()
+            // console.log("Return date: ", covidHistoryData['covidHistoryDate'])
+            // console.log("Return data: ", covidHistoryData['covidHistoryData'])
 
             const {center, zoom} = cityLocationData
             setCenter(center)
@@ -33,13 +39,28 @@ function CityView(props) {
     }, [city]);
 
     return (
-        <div>
+        <>
             <div className="geovisual">
                 {ready ? <LeafletMap center={center} zoom={zoom} geoJson={geoJson}/> :
                     <></>}
             </div>
-            <Charts/>
-        </div>
+            {/*<div className="switchtabs">*/}
+            {/*    <NavLink className="historytab" to={`/cityview/${city}/history`}>History</NavLink>*/}
+            {/*    <NavLink className="predictiontab" to={`/cityview/${city}/prediction`}>Prediction</NavLink>*/}
+            {/*</div>*/}
+            <div className="rightpane">
+                <div className="tabs">
+                    <NavBar city={city}/>
+                </div>
+                <div className="chartdisplay">
+                    <Routes>
+                        <Route path="history" element={<HistoryCharts/>}/>
+                        <Route path="prediction" element={<PredictionCharts/>}/>
+                        <Route path="*" element={<Navigate replace to={`/cityview/${city}/history`}/>}/>
+                    </Routes>
+                </div>
+            </div>
+        </>
     );
 }
 

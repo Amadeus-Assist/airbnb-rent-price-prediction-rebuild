@@ -10,8 +10,8 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 import java.util.Arrays;
 
-@EnableAspectJAutoProxy(exposeProxy = true)
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class })
+//@EnableAspectJAutoProxy(exposeProxy = true)
+@SpringBootApplication
 public class BackendApplication {
 
     public static void main(String[] args) {
