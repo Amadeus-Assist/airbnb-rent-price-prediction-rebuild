@@ -1,7 +1,7 @@
 package com.columbia.backend.service;
 
-import com.columbia.backend.pojo.IntDataContainer;
+import com.columbia.backend.pojo.DateDataIntPoint;
 
 public interface GetCityDataService {
-    IntDataContainer getHistoryData(String city, String state, String country, int timeStart, int timeEnd);
+    DateDataIntPoint[] getHistoryData(String city, String state, String country, int timeStart, int timeEnd);
 }

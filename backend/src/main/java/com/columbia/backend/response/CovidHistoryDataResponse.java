@@ -1,5 +1,6 @@
 package com.columbia.backend.response;
 
+import com.columbia.backend.pojo.DateDataIntPoint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,5 @@ import lombok.Setter;
 @Setter
 @Getter
 public class CovidHistoryDataResponse {
-    private String[] covidHistoryDate;
-    private int[] covidHistoryData;
+    private DateDataIntPoint[] covidHistory;
 }

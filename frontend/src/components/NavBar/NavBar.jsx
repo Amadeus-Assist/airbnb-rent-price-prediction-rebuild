@@ -8,7 +8,7 @@ function NavBar(props) {
     return (
         <ul className="nav nav-tabs nav-custom">
             <li className="nav-item nav-item-custom">
-                <NavLink className="nav-link nav-link-custom" activeClassName="active" to={`/cityview/${city}/history`}>History</NavLink>
+                <NavLink className="nav-link nav-link-custom" activeclassname="active" to={`/cityview/${city}/history`}>History</NavLink>
             </li>
             <li className="nav-item">
                 <NavLink className="nav-link" to={`/cityview/${city}/prediction`}>Prediction</NavLink>

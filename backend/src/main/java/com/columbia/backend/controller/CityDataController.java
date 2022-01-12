@@ -2,7 +2,7 @@ package com.columbia.backend.controller;
 
 import com.columbia.backend.annos.CityCheck;
 import com.columbia.backend.pojo.CityAttr;
-import com.columbia.backend.pojo.IntDataContainer;
+import com.columbia.backend.pojo.DateDataIntPoint;
 import com.columbia.backend.response.CityLocResponse;
 import com.columbia.backend.response.CityNameResponse;
 import com.columbia.backend.response.CovidHistoryDataResponse;
@@ -80,10 +80,9 @@ public class CityDataController {
         int endTime = (int) (end.getMillis() / 1000);
         int startTime = (int) (start.getMillis() / 1000);
         CityAttr attr = cityAttrMap.get(city);
-        IntDataContainer dataContainer = getCityDataService.getHistoryData(attr.getDbCity(), attr.getDbState(),
+        DateDataIntPoint[] historyData = getCityDataService.getHistoryData(attr.getDbCity(), attr.getDbState(),
                 attr.getDbCountry(), startTime, endTime);
-        logger.info("Returned history data length: {}", dataContainer.getData().length);
-        return new CovidHistoryDataResponse(dataContainer.getDate(), dataContainer.getData());
+        return new CovidHistoryDataResponse(historyData);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
