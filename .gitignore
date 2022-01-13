@@ -180,5 +180,8 @@ gradle-app.setting
 # Cache of project
 .gradletasknamecache
 
+# housing raw data
+**/housing_raw_data/
+
 # # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
 # gradle/wrapper/gradle-wrapper.properties
