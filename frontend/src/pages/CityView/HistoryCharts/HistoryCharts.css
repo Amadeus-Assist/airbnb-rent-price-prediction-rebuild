@@ -3,3 +3,15 @@
     height: 100%;
     background-color: chocolate;
 }
+
+.covidHistoryChart{
+    width: 100%;
+    height: 50%;
+    float: top;
+}
+
+.housingHistoryChart{
+    width: 100%;
+    height: 50%;
+    float: bottom;
+}

@@ -56,7 +56,7 @@ def process_raw_single_city(city: str, city_attr: list, filename: str, last_date
             room_type = row['room_type']
             std_price = row['price'] * room_ratios[room_type]
             price_raw_arr.append([city_attr[3], city_attr[4], city_attr[5], std_price, review_date,
-                                  int(time.mktime(last_date.timetuple()))])
+                                  int(time.mktime(review_date.timetuple()))])
             if review_date in price_count:
                 price_count[review_date].append(std_price)
             else:
@@ -123,6 +123,32 @@ def complete_avg_basic(price_count_df_sorted, complete_arr, last_date, last_pric
     return complete_arr
 
 
+def price_count_weekly(sorted_price_df, start_date, city, state, country):
+    week_start = start_date
+    week_start_next = week_start + timedelta(7)
+    week_count = {}
+    for index, row in sorted_price_df.iterrows():
+        local_date = row['date']
+        local_price = row['std_price']
+        while local_date.date() >= week_start_next:
+            week_start = week_start_next
+            week_start_next = week_start + timedelta(7)
+        if week_start in week_count:
+            week_count[week_start].append(local_price)
+        else:
+            week_count[week_start] = [local_price]
+
+    week_count_arr = []
+    for key, value in week_count.items():
+        week_avg_price = statistics.mean(value)
+        week_median_price = statistics.median(value)
+        week_count_arr.append([city, state, country, week_avg_price, week_median_price, key,
+                               int(time.mktime(key.timetuple()))])
+    week_count_df = pd.DataFrame(week_count_arr, columns=['city', 'state', 'country', 'week_avg_price',
+                                                          'week_median_price', 'date', 'date_int'])
+    return week_count_df
+
+
 def update_housing_single_city(city: str, city_props: dict, db_conn, engine, is_first: bool):
     date_format = "%Y-%m-%d"
     cursor = db_conn.cursor()
@@ -141,10 +167,11 @@ def update_housing_single_city(city: str, city_props: dict, db_conn, engine, is_
         if len(filename):
             print("returned filename: ", filename)
             price_df, price_count_df = process_raw_single_city(city, city_props[city], filename, last_date)
-            price_df.to_sql(con=engine, name='housing_raw', if_exists='append', index=False)
-            price_count_df.to_sql(con=engine, name='housing_count', if_exists='append', index=False)
+            sorted_price_df = price_df.sort_values(by=['date_int'])
             if is_first:
                 price_comp_df = complete_avg_first_time(price_count_df, attr[3], attr[4], attr[5])
+                last_date_week_start = last_date - timedelta(last_date.weekday())
+                week_count_df = price_count_weekly(sorted_price_df, last_date_week_start, attr[3], attr[4], attr[5])
             else:
                 sql = "SELECT date, avg_price FROM housing_avg_comp WHERE city=%s AND state=%s AND country=%s ORDER " \
                       "BY date_int DESC LIMIT 1"
@@ -154,7 +181,34 @@ def update_housing_single_city(city: str, city_props: dict, db_conn, engine, is_
                 last_comp_price = result[0][1]
                 price_comp_df = complete_avg_append(price_count_df, last_comp_date, last_comp_price, attr[3],
                                                     attr[4], attr[5])
+                last_date_week_start = last_date - timedelta(last_date.weekday())
+                last_date_week_start_int = int(time.mktime(last_date_week_start.timetuple()))
+                sql = "SELECT std_price FROM housing_raw WHERE city=%s AND state=%s AND country=%s AND date_int>=%s"
+                cursor.execute(sql, (attr[3], attr[4], attr[5], last_date_week_start_int))
+                result = cursor.fetchall()
+                last_next_week_start = last_date_week_start + timedelta(7)
+                last_next_week_start_int = int(time.mktime(last_next_week_start.timetuple()))
+                first_week_arr = []
+                for res in result:
+                    first_week_arr.append(res[0])
+                for index, row in sorted_price_df.iterrows():
+                    if row['date_int'] < last_next_week_start_int:
+                        first_week_arr.append(row['std_price'])
+                    else:
+                        break
+                if len(first_week_arr):
+                    first_week_avg = statistics.mean(first_week_arr)
+                    first_week_median = statistics.median(first_week_arr)
+                    sql = "UPDATE housing_count_week SET week_avg_price=%s, week_median_price=%s WHERE city=%s AND " \
+                          "state=%s AND country=%s AND date_int=%s"
+                    cursor.execute(sql, (
+                        first_week_avg, first_week_median, attr[3], attr[4], attr[5], last_date_week_start_int))
+                    week_count_df = price_count_weekly(sorted_price_df, last_next_week_start, attr[3], attr[4], attr[5])
+
+            price_df.to_sql(con=engine, name='housing_raw', if_exists='append', index=False)
+            price_count_df.to_sql(con=engine, name='housing_count', if_exists='append', index=False)
             price_comp_df.to_sql(con=engine, name='housing_avg_comp', if_exists='append', index=False)
+            week_count_df.to_sql(con=engine, name='housing_count_week', if_exists='append', index=False)
             sql = "UPDATE housing_update_record SET date=%s WHERE city=%s"
             val = (cur_date.strftime(date_format), city)
             cursor.execute(sql, val)
@@ -185,11 +239,8 @@ for key, value in city_props_raw.items():
     city_props[key] = value.strip().split('/')
 config = Config.get_instance()
 valid_cities = config['housing_valid_cities'].split('/')
-city = 'twin-cities'
-attr = city_props[city]
 for city in valid_cities:
     update_housing_single_city(city, city_props, db_conn, engine, True)
-
 
 # last_date = dt.strptime('2021-05-01', '%Y-%m-%d')
 # city = 'twin-cities'

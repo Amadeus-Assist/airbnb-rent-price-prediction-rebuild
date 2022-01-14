@@ -17,7 +17,7 @@ class BackendApplicationTests {
     @Test
     void contextLoads() {
         DateTime timeStart = DateTime.now();
-        DateDataIntPoint[] historyData = getCityDataService.getHistoryData("New York", "New York", "US", 1617166800,
+        DateDataIntPoint[] historyData = getCityDataService.getCovidHisData("New York", "New York", "US", 1617166800,
                 1641708000);
         System.out.format("Query spends %d millis.", new Duration(timeStart,DateTime.now()).getMillis());
         System.out.println(historyData);

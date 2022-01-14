@@ -3,10 +3,8 @@ package com.columbia.backend.controller;
 import com.columbia.backend.annos.CityCheck;
 import com.columbia.backend.pojo.CityAttr;
 import com.columbia.backend.pojo.DateDataIntPoint;
-import com.columbia.backend.response.CityLocResponse;
-import com.columbia.backend.response.CityNameResponse;
-import com.columbia.backend.response.CovidHistoryDataResponse;
-import com.columbia.backend.response.MarkersResponse;
+import com.columbia.backend.pojo.HousingHisPoint;
+import com.columbia.backend.response.*;
 import com.columbia.backend.service.GetCityDataService;
 import com.columbia.backend.service.GetCityLocationService;
 import com.columbia.backend.service.GetSimilarCityService;
@@ -69,25 +67,51 @@ public class CityDataController {
     @ResponseBody
     @GetMapping("/history/covid/{city}")
     public CovidHistoryDataResponse getCovidHistoryData(@NotNull @PathVariable("city") @CityCheck String city) {
-        String displayDaysStr = settingProps.getProperty(Constants.HIS_DISPLAY_DAYS_KEY);
+        String displayDaysStr = settingProps.getProperty(Constants.COVID_HIS_DISPLAY_DAYS_KEY);
         if (!displayDaysStr.matches(Constants.NAT_INT_REGEX)) {
-            logger.error("Invalid {}: {}", Constants.HIS_DISPLAY_DAYS_KEY, displayDaysStr);
-            throw new RuntimeException("Invalid history_display_days");
+            logger.error("Invalid {}: {}", Constants.COVID_HIS_DISPLAY_DAYS_KEY, displayDaysStr);
+            throw new RuntimeException("Invalid covid_history_display_days");
         }
         int displayDays = Integer.parseInt(displayDaysStr);
-        DateTime end = DateTime.now();
-        DateTime start = end.minusDays(displayDays);
-        int endTime = (int) (end.getMillis() / 1000);
-        int startTime = (int) (start.getMillis() / 1000);
+        int[] timeArr = getStartEndDataInt(displayDays);
+        int startTime = timeArr[0];
+        int endTime = timeArr[1];
         CityAttr attr = cityAttrMap.get(city);
-        DateDataIntPoint[] historyData = getCityDataService.getHistoryData(attr.getDbCity(), attr.getDbState(),
+        DateDataIntPoint[] historyData = getCityDataService.getCovidHisData(attr.getDbCity(), attr.getDbState(),
                 attr.getDbCountry(), startTime, endTime);
         return new CovidHistoryDataResponse(historyData);
+    }
+
+    @ResponseBody
+    @GetMapping("/history/housing/{city}")
+    public HousingHistoryDataResponse getHousingHistoryData(@NotNull @PathVariable("city") @CityCheck String city) {
+        String displayDaysStr = settingProps.getProperty(Constants.HOUSING_HIS_DISPLAY_DAYS_KEY);
+        if (!displayDaysStr.matches(Constants.NAT_INT_REGEX)) {
+            logger.error("Invalid {}: {}", Constants.HOUSING_HIS_DISPLAY_DAYS_KEY, displayDaysStr);
+            throw new RuntimeException("Invalid housing_history_display_days");
+        }
+        int displayDays = Integer.parseInt(displayDaysStr);
+        int[] timeArr = getStartEndDataInt(displayDays);
+        int startTime = timeArr[0];
+        int endTime = timeArr[1];
+//        System.out.println(Arrays.toString(timeArr));
+        CityAttr attr = cityAttrMap.get(city);
+        HousingHisPoint[] historyData = getCityDataService.getHousingHisData(attr.getDbCity(), attr.getDbState(),
+                attr.getDbCountry(), startTime, endTime);
+        return new HousingHistoryDataResponse(historyData);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException e) {
         return new ResponseEntity<>("not valid due to validation error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    public int[] getStartEndDataInt(int days){
+        DateTime end = DateTime.now();
+        DateTime start = end.minusDays(days);
+        int endTime = (int) (end.getMillis() / 1000);
+        int startTime = (int) (start.getMillis() / 1000);
+        return new int[]{startTime, endTime};
     }
 }

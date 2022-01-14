@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
-import './LineChart.css'
+import '../Chart.css'
 
-function LineChart(props) {
+function SimpleLineChart(props) {
     const {id, data, theme, title, yAxisMinValue, labelStep} = props
 
     useEffect(() => {
@@ -39,4 +39,4 @@ function LineChart(props) {
     );
 }
 
-export default LineChart;
+export default SimpleLineChart;
