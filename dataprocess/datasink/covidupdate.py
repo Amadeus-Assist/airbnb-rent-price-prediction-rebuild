@@ -29,7 +29,7 @@ def covid_single_update(date_str):
     time_format = '%m-%d-%Y'
     source_suffix = '.csv'
     df_column = ['city', 'state', 'country', 'confirmed', 'newcase', 'updatetime', 'updatetimeint']
-    city_str = prop['valid_cities']
+    city_str = prop['covid_valid_cities']
     valid_cities = parse_city(city_str)
     date = dt.strptime(date_str, time_format)
     table_time_format = '%Y-%m-%d %H:%M:%S'

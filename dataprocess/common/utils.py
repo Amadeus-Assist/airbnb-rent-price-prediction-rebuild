@@ -47,8 +47,3 @@ class Config(object):
                 '../resources/config.properties'
             ).get_properties()
         return cls.__instance
-
-
-if __name__ == '__main__':
-    tm = datetime.datetime.now()
-    print(time.mktime(tm.timetuple()))

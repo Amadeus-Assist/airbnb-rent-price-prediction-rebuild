@@ -28,7 +28,7 @@ data_range = prop['covid_date_range']
 time_format = '%m-%d-%Y'
 source_suffix = '.csv'
 df_column = ['city', 'state', 'country', 'confirmed', 'newcase', 'updatetime', 'updatetimeint']
-citystr = prop['valid_cities']
+citystr = prop['covid_valid_cities']
 valid_cities = parse_city(citystr)
 data_list = []
 
