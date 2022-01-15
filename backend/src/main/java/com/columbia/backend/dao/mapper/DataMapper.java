@@ -14,8 +14,8 @@ public interface DataMapper {
             "country=#{country} AND updatetimeint BETWEEN ${timeStart} AND ${timeEnd} ORDER BY updatetimeint")
     List<DateIntData> findCovidHistoryData(String city, String state, String country, int timeStart, int timeEnd);
 
-    @Select("SELECT date_int AS date_int, avg_price AS avg_price, median_price AS median_price FROM airbnb" +
-            ".housing_count WHERE city=#{city} AND state=#{state} AND country=#{country} AND date_int BETWEEN " +
+    @Select("SELECT date_int AS date_int, week_avg_price AS avg_price, week_median_price AS median_price FROM airbnb" +
+            ".housing_count_week WHERE city=#{city} AND state=#{state} AND country=#{country} AND date_int BETWEEN " +
             "${timeStart} AND ${timeEnd} ORDER BY date_int")
     List<HousingHisData> findHousingHistoryData(String city, String state, String country, int timeStart, int timeEnd);
 }

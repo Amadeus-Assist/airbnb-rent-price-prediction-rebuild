@@ -26,7 +26,7 @@ function HistoryCharts() {
         yaxisname: "price/$",
         drawAnchors: "0",
         showvalues: "0",
-        labelStep: "60",
+        labelStep: "8",
         compactdatamode: "1",
         slantLabel: "1",
         drawcrossline: "1",

@@ -10,7 +10,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 import java.util.Arrays;
 
-//@EnableAspectJAutoProxy(exposeProxy = true)
 @SpringBootApplication
 public class BackendApplication {
 

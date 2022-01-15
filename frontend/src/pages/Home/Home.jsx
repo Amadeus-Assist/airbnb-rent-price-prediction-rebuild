@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom'
-import {withRouter} from '../../withRouter'
 
 function Home() {
     const [cityInput, setCityInput] = useState('')
@@ -19,6 +18,12 @@ function Home() {
         }
     }
 
+    const handleKeyUp = (event) => {
+        if (event.key === 'Enter') {
+            doSearch().then()
+        }
+    }
+
     return (
         <div className="ui vertical masthead center aligned segment">
             <div className="ui text container">
@@ -26,7 +31,8 @@ function Home() {
                 <h2>Input city names to navigate!</h2>
                 <br/>
                 <div className="ui fluid action input">
-                    <input onChange={saveValue} type="text" id="cityName" placeholder="Search..."/>
+                    <input onChange={saveValue} onKeyUp={handleKeyUp} type="text" id="cityName"
+                           placeholder="Search..."/>
                     <button onClick={doSearch} className="ui primary button" id="viewCity">View Maps</button>
                 </div>
             </div>
@@ -34,4 +40,4 @@ function Home() {
     );
 }
 
-export default withRouter(Home);
+export default Home;
