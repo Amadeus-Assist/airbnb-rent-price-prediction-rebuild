@@ -183,5 +183,8 @@ gradle-app.setting
 # housing raw data
 **/housing_raw_data/
 
+#models
+**/models/
+
 # # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
 # gradle/wrapper/gradle-wrapper.properties
