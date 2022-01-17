@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.ConstraintViolationException;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
 
@@ -44,9 +43,7 @@ public class CityDataController {
     @ResponseBody
     @GetMapping("/getSimilarCity/{cityInput}")
     public CityNameResponse getSimilarCity(@NotNull @PathVariable("cityInput") String cityInput) {
-        logger.info("cityInput: {}", cityInput);
         String city = getSimilarCityService.getSimilarCity(cityInput);
-        logger.info("returned city: {}", city);
         return new CityNameResponse(city);
     }
 
@@ -61,7 +58,6 @@ public class CityDataController {
     @ResponseBody
     @GetMapping("/markers")
     public MarkersResponse getMarkers() {
-        logger.info("Markers: {}", Arrays.toString(getCityLocationService.getAllMarkers()));
         return new MarkersResponse(getCityLocationService.getAllMarkers());
     }
 

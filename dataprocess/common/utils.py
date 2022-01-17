@@ -1,7 +1,3 @@
-import datetime
-import time
-
-
 class Properties(object):
     def __init__(self, filename):
         self.filename = filename

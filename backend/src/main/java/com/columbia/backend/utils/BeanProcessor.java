@@ -68,7 +68,6 @@ public class BeanProcessor {
 
     @Bean(name = "cityAliasArr")
     public String[] getCityAliasArr(Map<String, String> cityAliasMap){
-        logger.info("Length of cityAliasMap in getCityAliasArr(): {}",cityAliasMap.size());
         return cityAliasMap.keySet().toArray(new String[0]);
     }
 }

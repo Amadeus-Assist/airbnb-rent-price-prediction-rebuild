@@ -4,17 +4,15 @@ import shutil
 import sys
 from pathlib import Path
 import time
-from datetime import datetime as dt, timedelta, date
+from datetime import datetime as dt, timedelta
 import pandas as pd
-import mysql.connector
 import numpy as np
-import sqlalchemy
 from keras import models
 from keras.models import Sequential
 from keras.layers import LSTM, Dense
 from keras.constraints import nonneg
 from sklearn.preprocessing import MinMaxScaler
-from common.utils import get_city_attr, Properties, Config
+from common.utils import get_city_attr
 
 max = 100000
 min = 0
@@ -123,8 +121,8 @@ def predictcovid(city, db_conn, engine):
     sql = "SELECT * FROM (SELECT updatetime AS date, newcase AS new FROM covid WHERE city=%s AND state=%s AND " \
           "country=%s ORDER BY updatetimeint DESC LIMIT %s) AS t1 ORDER BY t1.date ASC"
     data = pd.read_sql(sql, db_conn, params=(attr[3], attr[4], attr[5], trainlen))
-    length = len(data)
-    yaxisname = 'new'
+    # length = len(data)
+    # yaxisname = 'new'
     xaxisname = 'date'
     td = datetime.date.today()
     predicted_arr = []
@@ -170,7 +168,6 @@ def predictcovid(city, db_conn, engine):
         predicted_res.append(0 if predicted_stock_price[0][0] < 0 else round(predicted_stock_price[0][0], 0))
 
     predictdata['predicted_newcases'] = predicted_res
-    print(predictdata)
     # sql = "DELETE FROM covid_prediction"
     # cursor = db_conn.cursor()
     # cursor.execute(sql)

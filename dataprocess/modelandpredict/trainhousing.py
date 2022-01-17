@@ -6,17 +6,15 @@ import numpy as np
 import shutil
 import os
 from pathlib import Path
-from datetime import datetime as dt, timedelta, date
+from datetime import timedelta, date
 
-import mysql.connector
-import sqlalchemy
 from keras import models
 from keras.models import Sequential
 from keras.layers import LSTM, Dense
 from keras.constraints import nonneg
 from sklearn.preprocessing import MinMaxScaler
 
-from common.utils import get_city_attr, Properties, Config
+from common.utils import get_city_attr
 
 maxcovid = 100000
 mincovid = 0
@@ -184,7 +182,7 @@ def predicthousing(city, db_conn, engine):
     # housingdata.index = data.index
     # scoredata.index = data.index
     # print(housingdata)
-    length = len(data)
+    # length = len(data)
     yaxisname = 'new'
     xaxisname = 'date'
     # td = datetime.now()
@@ -226,7 +224,6 @@ def predicthousing(city, db_conn, engine):
     for sl in range(1, predictlen + 1):
         # total_gl = gap_len + sl - 1
         localmodelpath = os.path.join(modelpath, 'city_{}'.format(city), 'predictlen_{}'.format(sl), 'model.h5')
-        print("model path: ", localmodelpath)
         lstm_model = models.load_model(localmodelpath)
 
         predicted = lstm_model.predict(X_test)
@@ -238,7 +235,6 @@ def predicthousing(city, db_conn, engine):
         predicted_res.append(0 if predicted[0][1] < 0 else round(predicted[0][1], 2))
 
     predict_data['predicted_median_price'] = predicted_res
-    print(predict_data)
     # sql = "DELETE FROM housing_median_prediction"
     # cursor = db_conn.cursor()
     # cursor.execute(sql)

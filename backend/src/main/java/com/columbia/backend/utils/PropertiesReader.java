@@ -1,12 +1,9 @@
 package com.columbia.backend.utils;
 
-import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
-import com.columbia.backend.pojo.CityAttr;
 
 import javax.annotation.Resource;
 import java.io.FileReader;

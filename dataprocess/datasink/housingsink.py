@@ -1,13 +1,11 @@
 import datetime
 
 import requests
-from datetime import datetime as dt, timedelta, date
+from datetime import timedelta
 import mysql.connector
 import pandas as pd
-import numpy as np
 import statistics
 import time
-import os
 
 import sqlalchemy
 
@@ -25,10 +23,10 @@ def get_room_ratios() -> dict:
 
 def download_housing_files(city_short: str, city: str, state: str, country: str, date: str) -> str:
     url = "http://data.insideairbnb.com/{}/{}/{}/{}/visualisations/listings.csv".format(country, state, city, date)
-    print("request url: ", url)
+    # print("request url: ", url)
     r = requests.get(url, stream=True)
     if r.ok:
-        print("get OK response")
+        # print("get OK response")
         filename = "../housing_raw_data/" + city_short + "_listings.csv"
         with open(filename, "wb") as file:
             for chunk in r.iter_content(chunk_size=1024):
@@ -40,12 +38,11 @@ def download_housing_files(city_short: str, city: str, state: str, country: str,
         return ""
 
 
-def process_raw_single_city(city: str, city_attr: list, filename: str, last_date):
-    print("into function")
+def process_raw_single_city(city_attr: list, filename: str, last_date):
     raw_df = pd.read_csv(filename, dtype={'number_of_reviews_ltm': str, 'license': str})
     raw_df['last_review'] = pd.to_datetime(raw_df.last_review)
-    print(raw_df)
-    print(raw_df['last_review'])
+    # print(raw_df)
+    # print(raw_df['last_review'])
     price_raw_arr = []
     room_ratios = get_room_ratios()
     price_count = {}
@@ -71,10 +68,10 @@ def process_raw_single_city(city: str, city_attr: list, filename: str, last_date
                                 int(time.mktime(key.timetuple()))])
     price_count_df = pd.DataFrame(price_count_arr, columns=['city', 'state', 'country', 'avg_price', 'median_price',
                                                             'date', 'date_int'])
-    print("price_df")
-    print(price_df)
-    print("price_count_df")
-    print(price_count_df)
+    # print("price_df")
+    # print(price_df)
+    # print("price_count_df")
+    # print(price_count_df)
     return price_df, price_count_df
 
 
@@ -163,18 +160,14 @@ def update_housing_single_city(city: str, city_props: dict, db_conn, engine, is_
     sql = "SELECT date FROM housing_update_record WHERE city=%s"
     cursor.execute(sql, (city,))
     result = cursor.fetchall()
-    print("Date Result: ", result)
     last_date = result[0][0]
-    print("date_str: ", last_date)
     attr = city_props[city]
     # last_date = dt.strptime(last_date_str, date_format)
     cur_date = datetime.date.today()
-    print("city_short: ", city)
     while cur_date > last_date:
         filename = download_housing_files(city, attr[0], attr[1], attr[2], cur_date.strftime(date_format))
         if len(filename):
-            print("returned filename: ", filename)
-            price_df, price_count_df = process_raw_single_city(city, city_props[city], filename, last_date)
+            price_df, price_count_df = process_raw_single_city(city_props[city], filename, last_date)
             sorted_price_df = price_df.sort_values(by=['date_int'])
             if is_first:
                 price_comp_df = complete_count_first_time(price_count_df, attr[3], attr[4], attr[5])
