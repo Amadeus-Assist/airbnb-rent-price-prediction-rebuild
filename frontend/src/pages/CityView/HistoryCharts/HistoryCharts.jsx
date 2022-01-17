@@ -14,11 +14,15 @@ function HistoryCharts() {
     const [housingReady, setHousingReady] = useState(false)
 
     const covidHisConfig = {
-        id: "covidHistory",
-        theme: "candy",
-        title: "Daily New Cases Trend of COVID-19",
+        caption: "Daily New Cases Trend of COVID-19",
+        adjustDiv: "0",
         yAxisMinValue: "0",
+        labelFontSize: "10",
+        drawAnchors: "0",
         labelStep: "28",
+        theme: "candy",
+        labelDisplay: "rotate",
+        slantLabel: "1"
     }
 
     const housingHisConfig = {
@@ -86,7 +90,7 @@ function HistoryCharts() {
     return (
         <div className="historycharts">
             <div className="covidHistoryChart">
-                {covidReady ? <SimpleLineChart data={covidHistory} {...covidHisConfig}/> : <div/>}
+                {covidReady ? <SimpleLineChart data={covidHistory} config={covidHisConfig} id="covidHistory"/> : <div/>}
             </div>
             <div className="housingHistoryChart">
                 {housingReady ?

@@ -1,6 +1,6 @@
 package com.columbia.backend;
 
-import com.columbia.backend.pojo.DateDataIntPoint;
+import com.columbia.backend.pojo.DateIntPoint;
 import com.columbia.backend.service.GetCityDataService;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
@@ -17,7 +17,7 @@ class BackendApplicationTests {
     @Test
     void contextLoads() {
         DateTime timeStart = DateTime.now();
-        DateDataIntPoint[] historyData = getCityDataService.getCovidHisData("New York", "New York", "US", 1617166800,
+        DateIntPoint[] historyData = getCityDataService.getCovidHisData("New York", "New York", "US", 1617166800,
                 1641708000);
         System.out.format("Query spends %d millis.", new Duration(timeStart,DateTime.now()).getMillis());
         System.out.println(historyData);

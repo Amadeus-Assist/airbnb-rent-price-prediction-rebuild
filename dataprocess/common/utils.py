@@ -47,3 +47,11 @@ class Config(object):
                 '../resources/config.properties'
             ).get_properties()
         return cls.__instance
+
+
+def get_city_attr():
+    city_props_raw = Properties('../resources/housing_retrieve_sink.properties').get_properties()
+    city_props = {}
+    for key, value in city_props_raw.items():
+        city_props[key] = value.strip().split('/')
+    return city_props

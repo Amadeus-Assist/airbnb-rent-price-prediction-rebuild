@@ -2,7 +2,8 @@ package com.columbia.backend.controller;
 
 import com.columbia.backend.annos.CityCheck;
 import com.columbia.backend.pojo.CityAttr;
-import com.columbia.backend.pojo.DateDataIntPoint;
+import com.columbia.backend.pojo.DateDoublePoint;
+import com.columbia.backend.pojo.DateIntPoint;
 import com.columbia.backend.pojo.HousingHisPoint;
 import com.columbia.backend.response.*;
 import com.columbia.backend.service.GetCityDataService;
@@ -73,11 +74,11 @@ public class CityDataController {
             throw new RuntimeException("Invalid covid_history_display_days");
         }
         int displayDays = Integer.parseInt(displayDaysStr);
-        int[] timeArr = getStartEndDataInt(displayDays);
+        int[] timeArr = getStartEndDataIntBefore(displayDays);
         int startTime = timeArr[0];
         int endTime = timeArr[1];
         CityAttr attr = cityAttrMap.get(city);
-        DateDataIntPoint[] historyData = getCityDataService.getCovidHisData(attr.getDbCity(), attr.getDbState(),
+        DateIntPoint[] historyData = getCityDataService.getCovidHisData(attr.getDbCity(), attr.getDbState(),
                 attr.getDbCountry(), startTime, endTime);
         return new CovidHistoryDataResponse(historyData);
     }
@@ -91,14 +92,49 @@ public class CityDataController {
             throw new RuntimeException("Invalid housing_history_display_days");
         }
         int displayDays = Integer.parseInt(displayDaysStr);
-        int[] timeArr = getStartEndDataInt(displayDays);
+        int[] timeArr = getStartEndDataIntBefore(displayDays);
         int startTime = timeArr[0];
         int endTime = timeArr[1];
-//        System.out.println(Arrays.toString(timeArr));
         CityAttr attr = cityAttrMap.get(city);
         HousingHisPoint[] historyData = getCityDataService.getHousingHisData(attr.getDbCity(), attr.getDbState(),
                 attr.getDbCountry(), startTime, endTime);
         return new HousingHistoryDataResponse(historyData);
+    }
+
+    @ResponseBody
+    @GetMapping("/prediction/covid/{city}")
+    public CovidPredictionDataResponse getCovidPredictionData(@NotNull @PathVariable("city") @CityCheck String city){
+        String displayDaysStr = settingProps.getProperty(Constants.COVID_PRE_DISPLAY_DAYS_KEY);
+        if (!displayDaysStr.matches(Constants.NAT_INT_REGEX)) {
+            logger.error("Invalid {}: {}", Constants.COVID_PRE_DISPLAY_DAYS_KEY, displayDaysStr);
+            throw new RuntimeException("Invalid covid_prediction_display_days");
+        }
+        int displayDays = Integer.parseInt(displayDaysStr);
+        int[] timeArr = getStartEndDataIntAfter(displayDays);
+        int startTime = timeArr[0];
+        int endTime = timeArr[1];
+        CityAttr attr = cityAttrMap.get(city);
+        DateIntPoint[] predictionData = getCityDataService.getCovidPreData(attr.getDbCity(), attr.getDbState(),
+                attr.getDbCountry(), startTime, endTime);
+        return new CovidPredictionDataResponse(predictionData);
+    }
+
+    @ResponseBody
+    @GetMapping("/prediction/housing/{city}")
+    public HousingPredictionDataResponse getHousingPredictionData(@NotNull @PathVariable("city") @CityCheck String city){
+        String displayDaysStr = settingProps.getProperty(Constants.HOUSING_PRE_DISPLAY_DAYS_KEY);
+        if (!displayDaysStr.matches(Constants.NAT_INT_REGEX)) {
+            logger.error("Invalid {}: {}", Constants.HOUSING_PRE_DISPLAY_DAYS_KEY, displayDaysStr);
+            throw new RuntimeException("Invalid housing_prediction_display_days");
+        }
+        int displayDays = Integer.parseInt(displayDaysStr);
+        int[] timeArr = getStartEndDataIntAfter(displayDays);
+        int startTime = timeArr[0];
+        int endTime = timeArr[1];
+        CityAttr attr = cityAttrMap.get(city);
+        DateDoublePoint[] predictionData = getCityDataService.getHousingPreData(attr.getDbCity(), attr.getDbState(),
+                attr.getDbCountry(), startTime, endTime);
+        return new HousingPredictionDataResponse(predictionData);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -107,9 +143,19 @@ public class CityDataController {
         return new ResponseEntity<>("not valid due to validation error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    public int[] getStartEndDataInt(int days){
-        DateTime end = DateTime.now();
-        DateTime start = end.minusDays(days);
+
+
+    public int[] getStartEndDataIntBefore(int days){
+        DateTime end = DateTime.now().withTimeAtStartOfDay().minusDays(1);
+        DateTime start = end.minusDays(days-1);
+        int endTime = (int) (end.getMillis() / 1000);
+        int startTime = (int) (start.getMillis() / 1000);
+        return new int[]{startTime, endTime};
+    }
+
+    public int[] getStartEndDataIntAfter(int days){
+        DateTime start = DateTime.now().withTimeAtStartOfDay();
+        DateTime end = start.plusDays(days-1);
         int endTime = (int) (end.getMillis() / 1000);
         int startTime = (int) (start.getMillis() / 1000);
         return new int[]{startTime, endTime};

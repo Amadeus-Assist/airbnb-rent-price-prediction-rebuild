@@ -78,48 +78,56 @@ def process_raw_single_city(city: str, city_attr: list, filename: str, last_date
     return price_df, price_count_df
 
 
-def complete_avg_first_time(price_count_df, city, state, country):
+def complete_count_first_time(price_count_df, city, state, country):
     sorted_df = price_count_df.sort_values(by=['date_int'])
     row_1 = sorted_df.iloc[0]
     last_date = row_1['date']
-    last_price = row_1['avg_price']
-    complete_arr = [[city, state, country, last_price, last_date,
+    last_avg_price = row_1['avg_price']
+    last_median_price = row_1['median_price']
+    complete_arr = [[city, state, country, last_avg_price, last_median_price, last_date,
                      int(time.mktime(last_date.timetuple()))]]
     sorted_df.drop(index=sorted_df.index[0],
                    axis=0,
                    inplace=True)
-    complete_arr = complete_avg_basic(sorted_df, complete_arr, last_date, last_price, city, state, country)
-    price_comp_df = pd.DataFrame(complete_arr, columns=['city', 'state', 'country', 'avg_price',
+    complete_arr = complete_count_basic(sorted_df, complete_arr, last_date, last_avg_price, last_median_price, city,
+                                        state, country)
+    price_comp_df = pd.DataFrame(complete_arr, columns=['city', 'state', 'country', 'avg_price', 'median_price',
                                                         'date', 'date_int'])
     return price_comp_df
 
 
-def complete_avg_append(price_count_df, last_date, last_price, city, state, country):
+def complete_count_append(price_count_df, last_date, last_avg_price, last_median_price, city, state, country):
     sorted_df = price_count_df.sort_values(by=['date_int'])
     complete_arr = []
-    complete_avg_basic(sorted_df, complete_arr, last_date, last_price, city, state, country)
-    price_comp_df = pd.DataFrame(complete_arr, columns=['city', 'state', 'country', 'avg_price',
+    complete_count_basic(sorted_df, complete_arr, last_date, last_avg_price, last_median_price, city, state, country)
+    price_comp_df = pd.DataFrame(complete_arr, columns=['city', 'state', 'country', 'avg_price', 'median_price',
                                                         'date', 'date_int'])
     return price_comp_df
 
 
-def complete_avg_basic(price_count_df_sorted, complete_arr, last_date, last_price, city, state, country):
+def complete_count_basic(price_count_df_sorted, complete_arr, last_date, last_avg_price, last_median_price, city, \
+                         state, country):
     previous_date = last_date
-    previous_price = last_price
+    previous_avg_price = last_avg_price
+    previous_median_price = last_median_price
     for index, row in price_count_df_sorted.iterrows():
         current_date = row['date']
-        current_price = row['avg_price']
+        current_avg_price = row['avg_price']
+        current_median_price = row['median_price']
         diff_day = (current_date - previous_date).days
-        slope = (current_price - previous_price) / diff_day
+        avg_slope = (current_avg_price - previous_avg_price) / diff_day
+        median_slope = (current_median_price - previous_median_price) / diff_day
         for i in range(1, diff_day):
-            insert_price = slope * i + previous_price
+            insert_avg_price = avg_slope * i + previous_avg_price
+            insert_median_price = median_slope * i + previous_median_price
             insert_date = previous_date + timedelta(i)
-            complete_arr.append([city, state, country, insert_price, insert_date,
+            complete_arr.append([city, state, country, insert_avg_price, insert_median_price, insert_date,
                                  int(time.mktime(insert_date.timetuple()))])
-        complete_arr.append([city, state, country, current_price, current_date,
+        complete_arr.append([city, state, country, current_avg_price, current_median_price, current_date,
                              int(time.mktime(current_date.timetuple()))])
         previous_date = current_date
-        previous_price = current_price
+        previous_avg_price = current_avg_price
+        previous_median_price = current_median_price
     return complete_arr
 
 
@@ -169,18 +177,19 @@ def update_housing_single_city(city: str, city_props: dict, db_conn, engine, is_
             price_df, price_count_df = process_raw_single_city(city, city_props[city], filename, last_date)
             sorted_price_df = price_df.sort_values(by=['date_int'])
             if is_first:
-                price_comp_df = complete_avg_first_time(price_count_df, attr[3], attr[4], attr[5])
+                price_comp_df = complete_count_first_time(price_count_df, attr[3], attr[4], attr[5])
                 last_date_week_start = last_date - timedelta(last_date.weekday())
                 week_count_df = price_count_weekly(sorted_price_df, last_date_week_start, attr[3], attr[4], attr[5])
             else:
-                sql = "SELECT date, avg_price FROM housing_avg_comp WHERE city=%s AND state=%s AND country=%s ORDER " \
-                      "BY date_int DESC LIMIT 1"
+                sql = "SELECT date, avg_price, median_price FROM housing_avg_comp WHERE city=%s AND state=%s AND " \
+                      "country=%s ORDER BY date_int DESC LIMIT 1"
                 cursor.execute(sql, (attr[3], attr[4], attr[5],))
                 result = cursor.fetchall()
                 last_comp_date = result[0][0]
-                last_comp_price = result[0][1]
-                price_comp_df = complete_avg_append(price_count_df, last_comp_date, last_comp_price, attr[3],
-                                                    attr[4], attr[5])
+                last_comp_avg_price = result[0][1]
+                last_comp_median_price = result[0][2]
+                price_comp_df = complete_count_append(price_count_df, last_comp_date, last_comp_avg_price,
+                                                      last_comp_median_price, attr[3], attr[4], attr[5])
                 last_date_week_start = last_date - timedelta(last_date.weekday())
                 last_date_week_start_int = int(time.mktime(last_date_week_start.timetuple()))
                 sql = "SELECT std_price FROM housing_raw WHERE city=%s AND state=%s AND country=%s AND date_int>=%s"
@@ -207,7 +216,7 @@ def update_housing_single_city(city: str, city_props: dict, db_conn, engine, is_
 
             price_df.to_sql(con=engine, name='housing_raw', if_exists='append', index=False)
             price_count_df.to_sql(con=engine, name='housing_count', if_exists='append', index=False)
-            price_comp_df.to_sql(con=engine, name='housing_avg_comp', if_exists='append', index=False)
+            price_comp_df.to_sql(con=engine, name='housing_count_comp', if_exists='append', index=False)
             week_count_df.to_sql(con=engine, name='housing_count_week', if_exists='append', index=False)
             sql = "UPDATE housing_update_record SET date=%s WHERE city=%s"
             val = (cur_date.strftime(date_format), city)
@@ -241,6 +250,8 @@ config = Config.get_instance()
 valid_cities = config['housing_valid_cities'].split('/')
 for city in valid_cities:
     update_housing_single_city(city, city_props, db_conn, engine, True)
+
+db_conn.close()
 
 # last_date = dt.strptime('2021-05-01', '%Y-%m-%d')
 # city = 'twin-cities'

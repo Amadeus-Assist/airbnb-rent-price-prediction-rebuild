@@ -9,4 +9,6 @@ public class Constants {
     public static final String DATE_YMD_PATTERN ="yyyy-MM-dd";
     public static final String COVID_HIS_DISPLAY_DAYS_KEY="covid_history_display_days";
     public static final String HOUSING_HIS_DISPLAY_DAYS_KEY="housing_history_display_days";
+    public static final String COVID_PRE_DISPLAY_DAYS_KEY="covid_prediction_display_days";
+    public static final String HOUSING_PRE_DISPLAY_DAYS_KEY="housing_prediction_display_days";
 }

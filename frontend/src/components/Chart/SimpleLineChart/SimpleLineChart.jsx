@@ -2,21 +2,11 @@ import React, {useEffect} from 'react';
 import '../Chart.css'
 
 function SimpleLineChart(props) {
-    const {id, data, theme, title, yAxisMinValue, labelStep} = props
+    const {id, data, config} = props
 
     useEffect(() => {
         const dataSource = {
-            chart: {
-                caption: title,
-                adjustDiv: "0",
-                yAxisMinValue: yAxisMinValue,
-                labelFontSize: "10",
-                drawAnchors: "0",
-                labelStep: labelStep,
-                theme: theme,
-                labelDisplay: "rotate",
-                slantLabel: "1"
-            },
+            chart: config,
             data: data
         };
 
@@ -30,7 +20,7 @@ function SimpleLineChart(props) {
                 dataSource: dataSource
             }).render();
         });
-    }, [data, id, theme, title, yAxisMinValue, labelStep])
+    }, [data, id, config])
 
     return (
         <div className="chart" id={id}>

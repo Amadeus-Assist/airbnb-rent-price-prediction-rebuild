@@ -10,6 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @Setter
 @Getter
-public class CovidHistoryDataResponse {
-    private DateIntPoint[] covidHistory;
+public class CovidPredictionDataResponse {
+    private DateIntPoint[] covidPrediction;
 }

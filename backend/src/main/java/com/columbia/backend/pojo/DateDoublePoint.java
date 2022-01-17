@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DateDataIntPoint {
+public class DateDoublePoint {
     String label;
-    int value;
+    double value;
 }
