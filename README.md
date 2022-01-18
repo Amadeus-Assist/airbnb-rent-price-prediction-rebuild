@@ -10,7 +10,7 @@ predicted housing prices take both covid and historical housing prices into cons
 
 The frontend of this project is written by React 17.0.2, map is provided by Leaflet Map and charts are rendered by FusionCharts.
 
-The backend is constructed by SpringBoot 2.6.2 with Tomcat as the server. To connect the database, the MyBatis and Druid are used.
+The backend is constructed by SpringBoot 2.6.2 with Tomcat as the server.
 
 We choose MySQL as our database, the MyBatis and Druid are used to connect database for backend.
 
