@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import LeafletMap from "../../components/LeafletMap/LeafletMap";
-import './WorldMap.css'
 
 function WorldMap() {
     const [ready, setReady] = useState(false)

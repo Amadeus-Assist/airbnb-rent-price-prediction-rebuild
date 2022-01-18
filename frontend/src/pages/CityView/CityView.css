@@ -11,15 +11,8 @@
     overflow: hidden;
 }
 
-/*.tabs{*/
-/*    width: 100%;*/
-/*    height: 10%;*/
-/*    float: top;*/
-/*}*/
-
 .chartdisplay{
     width: 100%;
     height: calc(100% - 39px);
     float: bottom;
-    background-color: cornflowerblue;
 }
