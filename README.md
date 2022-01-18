@@ -1,4 +1,4 @@
-# Airbnb-Rent-Price-Predictiion
+# Airbnb-Rent-Price-Prediction
 
 ## Brief Description
 
@@ -15,7 +15,7 @@ The backend is constructed by SpringBoot 2.6.2 with Tomcat as the server.
 We choose MySQL as our database, the MyBatis and Druid are used to connect database for backend.
 
 We process and predict the data with Python. The raw data is first cleaned and stored in database. Then the long short-term memory (LSTM) model provided by Keras is used to do 
-the prediction. The scirpts of data sink and prediction should be run periodically with schedular like Airflow.
+the prediction. The scripts of data sink and prediction should be run periodically with scheduler like Airflow.
 
 ## Website Demonstration
 
